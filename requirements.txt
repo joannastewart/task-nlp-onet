@@ -1,0 +1,10 @@
+pandas
+numpy
+scikit-learn
+pyyaml
+matplotlib
+umap-learn
+hdbscan
+sentence-transformers
+torch
+jupyter
