@@ -1,0 +1,10 @@
+paths:
+  raw: data/raw
+  processed: data/processed
+  artifacts: artifacts
+filters:
+  min_tokens: 8
+vectorizer: tfidf
+sbert:
+  model_name: all-MiniLM-L6-v2
+  max_len: 128
