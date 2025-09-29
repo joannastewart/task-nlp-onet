@@ -7,5 +7,5 @@ def calc_tfidf(texts):
                           sublinear_tf=True,
                           lowercase=True,norm="l2",dtype=np.float32,analyzer="word")
     X = vec.fit_transform(texts) #returns sparse matrix where rows are texts and columns are n-grams
-    feature_names = list(vec.get_feature_names_out())
-    return X, feature_names
+    return X, vec
+
