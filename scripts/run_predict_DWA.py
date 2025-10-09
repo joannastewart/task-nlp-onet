@@ -9,7 +9,7 @@ df = pd.read_parquet("../data/processed/analysis_df.parquet", engine="pyarrow")
 
 #create multi label dataset
 texts, Y, mlb, task_ids, kept_DWAs = make_multilabel_dataset(df, min_per_dwa=20)
-print("text shape:",len(texts))
+print("text shape with min tasks per dwa:",len(texts))
 print("text head:",texts.head(3))
 print("Y shape:",Y.shape)
 print("Y sample:",Y[:8,:8])

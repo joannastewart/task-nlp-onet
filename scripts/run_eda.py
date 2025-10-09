@@ -2,7 +2,9 @@ from src.onet_project.eda import summarize_basics, plot_hist, top_ngrams
 import matplotlib.pyplot as plt
 import pandas as pd
 
+#read in a summarize previously created parquet file
 df = pd.read_parquet("../data/processed/analysis_df.parquet", engine="pyarrow")
+
 summary = summarize_basics(df)
 print("Rows:", summary["n_rows"], "| DWAs:", summary["n_dwas"], "| Tasks:", summary["n_tasks"])
 n_with_1 = (summary["tasks_per_dwa"] == 1).sum()

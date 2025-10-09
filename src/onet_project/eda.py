@@ -1,16 +1,16 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-
 def summarize_basics(df: pd.DataFrame) -> dict:
-    tasks_per_dwa = (df.groupby("dwa_id",observed=True)["task_id"]
+    tasks_per_dwa = (df.groupby("dwa_id",observed=True)["task_text"]
                        .nunique().sort_values(ascending=False))
-    dwas_per_task = (df.groupby("task_id",observed=True)["dwa_id"]
+    dwas_per_task = (df.groupby("task_text",observed=True)["dwa_id"]
                        .nunique().value_counts().sort_index())
     return {
         "n_rows": len(df),
-        "n_tasks": df["task_id"].nunique(),
+        "n_tasks": df["task_text"].nunique(),
         "n_dwas": df["dwa_id"].nunique(),
         "tasks_per_dwa": tasks_per_dwa,
         "dwas_per_task_hist": dwas_per_task
