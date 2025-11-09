@@ -91,3 +91,17 @@ def add_group_stats(df: pd.DataFrame, dist_col: str, prefix: str):
     df[f"{prefix}_std_dwa"]  = sd.fillna(0.0).astype("float32")
     df[f"{prefix}_med_dwa"]  = med.astype("float32")
     return df
+
+#add columns representing the closest centroid so we can flag if a task is closer to another DWA
+#sbert...
+def top_dense(V: np.ndarray, C: np.ndarray): #C are centroids, V are SBERT embeddings
+    S = (V @ C.T).astype("float32")          #uses cosine similarity, shape is tasks * centroids
+    best_idx = S.argmax(axis=1)
+    best_dist = 1.0 - S[np.arange(S.shape[0]), best_idx]
+    return best_idx, best_dist
+#tfidf...
+def top_sparse(X: sp.csr_matrix, C: sp.csr_matrix): #X is sparse matrix of tfidf, C centroids
+    M = (X @ C.T).toarray().astype("float32")
+    best_idx = M.argmax(axis=1)
+    best_dist = 1.0 - M[np.arange(X.shape[0]), best_idx]
+    return best_idx, best_dist

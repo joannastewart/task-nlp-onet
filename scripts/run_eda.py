@@ -34,8 +34,6 @@ ax3.set_xlabel("# of DWAs per task")
 ax3.set_ylabel("# of tasks")
 ax3.set_title("Number of DWAs that Each Task Maps To")
 ax3.set_xticks(x)
-# If counts are very skewed, a log y-scale can help:
-# ax2.set_yscale("log")
 ax3.grid(axis="y", alpha=0.3)
 fig3.tight_layout()
 fig3.savefig("../artifacts/figures/dwas_per_task_bar.png", dpi=150, bbox_inches="tight")

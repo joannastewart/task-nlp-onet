@@ -36,6 +36,7 @@ def build_analysis_df(df_task_dwa, df_occ, df_dwa_desc, df_task_desc):
            .merge(task, on='task_id', how='left', validate='many_to_one'))
 
     out = out.drop_duplicates(['task_id','dwa_id'])
+    #standardize text in task
     out["task_text"]= (
         out["task_text"].fillna("")
         .str.lower()
@@ -47,7 +48,7 @@ def build_analysis_df(df_task_dwa, df_occ, df_dwa_desc, df_task_desc):
     out['task_len'] = out['task_text'].fillna('').str.split().str.len()
 
 
-    #convert to category (smaller/faster)
+    #convert to category (smaller, faster)
     for c in ['soc_code','task_id','dwa_id','occ_title','dwa_title']:
         if c in out.columns:
             out[c] = out[c].astype('category')
@@ -71,7 +72,7 @@ def dup_task_text(df: pd.DataFrame):
 
 #limit one task text per dwa
 def dedup_task_text(df: pd.DataFrame) -> pd.DataFrame:
-    keys = ["dwa_id", "dwa_title", "task_text","task_len" ]
+    keys = ["dwa_id", "task_text" ]
     rep = (
         df.reset_index(names="row_i")
         .sort_values(keys + ["task_id"])

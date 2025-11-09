@@ -1,6 +1,7 @@
 from src.onet_project.make_analysis_file import build_analysis_df, dup_task_text, dedup_task_text
 import pandas as pd
 
+#load raw data
 df_task_dwa = pd.read_csv("../data/raw/Tasks to DWAs.txt", sep="\t", dtype=str, na_filter=False)
 df_task_desc = pd.read_csv("../data/raw/Task Statements.txt", sep="\t", dtype=str, na_filter=False)
 df_dwa_desc = pd.read_csv("../data/raw/DWA Reference.txt", sep="\t", dtype=str, na_filter=False)
@@ -27,13 +28,13 @@ print("\nTexts that map to multiple DWAs (top 5 by frequency):")
 print(grouped_task_text.loc[grouped_task_text["n_dwas"] > 1]
                 .sort_values(["n_dwas"], ascending=[False])
                 .head(5))
-
+#deduped at dwa_id, task_text level
 analysis_deduped = dedup_task_text(analysis)
 
 analysis_deduped.to_parquet("../data/processed/analysis_df.parquet", index=False)
 
-print("Rows:", len(analysis_deduped), "| DWAs:", analysis_deduped['dwa_id'].nunique(), "| Tasks:", analysis_deduped['task_text'].nunique())
+print("Post de-dup Rows:", len(analysis_deduped), "| DWAs:", analysis_deduped['dwa_id'].nunique(), "| Tasks:", analysis_deduped['task_text'].nunique())
 print(analysis_deduped.columns)
-print(analysis_deduped['task_text'].sample(3))
+#print(analysis_deduped['task_text'].sample(3))
 
 #keep in mind that soc_code, occ_title, task_id are incomplete due to removal of dups
