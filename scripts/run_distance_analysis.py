@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 
 #load file with distances calculated for each dwa centroid by embedding type
 PATH = "../data/processed/analysis_with_distances.parquet"
@@ -7,7 +8,7 @@ df = pd.read_parquet(PATH)
 #print(df.columns)
 
 #create some flags
-high_z = 2.5
+high_z = 1.5
 disagree_z = 1.5
 small_dwa = 7
 small = df['tasks_per_dwa'] <= small_dwa
@@ -90,3 +91,19 @@ out = (
     )
 out.to_csv("../artifacts/reports/outliers_distance.csv", index=False)
 
+#histogram of distance for tfidf and sbert at the dwa level
+#all_means = np.concatenate([dwa_summary["mean_dist_tfidf"].values,dwa_summary["mean_dist_sbert"].values])
+bins = 30
+plt.figure(figsize=(7, 4))
+plt.hist(dwa_summary["mean_dist_tfidf"],bins=bins,alpha=0.5,label="TF-IDF mean distance")
+
+plt.hist(dwa_summary["mean_dist_sbert"],bins=bins,alpha=0.5,label="SBERT mean distance",)
+
+plt.xlabel("Mean task–DWA centroid distance")
+plt.ylabel("Number of DWAs")
+plt.title("Distribution of mean distances by embedding type")
+plt.legend()
+plt.grid(axis="y", alpha=0.3)
+plt.tight_layout()
+plt.savefig("../artifacts/figures/dwa_mean_distance_hist_tfidf_vs_sbert.png", dpi=300)
+plt.close()

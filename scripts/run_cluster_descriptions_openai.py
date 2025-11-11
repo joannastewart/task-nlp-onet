@@ -15,33 +15,35 @@ client = OpenAI()
 
 #load
 df = pd.read_parquet(in_path)
-#print("Rows:", len(df))
-#print("Unique clusters:", df["task_cluster_id"].nunique())
-#group by cluster, text as a list
-grouped = df.groupby("task_cluster_id")["task_text"].apply(list)
+
+#group by cluster, limit to certain number of texts randomly, text as a list
+max_tasks = 20 #limit inputs
+random_state = 6740
+grouped = (df.groupby("task_cluster_id")["task_text"].apply(lambda s: s.sample(n=min(max_tasks, len(s)),random_state=random_state).tolist()))
 
 #first come up with the system message to kick off the session; pulled from ONET documenation
 SYSTEM_MESSAGE = """
-You are an expert O*NET occupational analyst. 
-Your job is to write concise, standardized “Detailed Work Activity”-style summaries. 
-The summary is based on sample task statements.
+You are an analyst with expertise in occupations.
+You work for O*NET with the Department of Labor. 
+Your job is to write standardized “Detailed Work Activity”-style summaries. 
+The summary is based on sample task statements provided.
 
 Follow these rules:
-- Begin with a present-tense action verb (e.g., Measure, Install, Record).
+- Begin with a present-tense action verb (e.g., Fit, Install, Devise).
 - Use only one action verb per summary.
-- Be very clear about the activity the incumbent is performing. You should be able to visualize what is done. “Lift patients” is clear; “Respond to emergencies” is not.
-- Do NOT include a subject (no “Workers”, “They”, or “I”).
+- The summary should be clear about the activity. You should be able to visualize the task. “Harvest vegetables” is clear; “Grow things” is not.
+- Do NOT include a subject (no “Workers" or "They").
 - Use clear, general language describing the main work action and its object.
 - The summary will be less specific than individual task statements.
-- Keep it to ONE sentence, about 10–18 words.
-- Use as few nouns as possible while still being specific.“Equipment” is too general, “laser surgery robots” is probably too precise.
-- Avoid adverbs, examples in parentheses, or multiple actions joined with “and” unless they are tightly related.
+- Keep it to ONE sentence, about 10–20 words.
+- Use as few nouns as possible while still being specific.“Equipment” is too general, “laser guided drones” is probably too precise.
+- Avoid adverbs, examples in parentheses, or multiple action verbs joined with “and” unless they are tightly related.
 - Do not mention specific job titles or occupations.
 """
 #user prompt will give the specific tasks per cluster
 USER_PROMPT_TEMPLATE = """
 You are given example work tasks that all belong to the same semantic cluster.
-Write ONE O*NET-style Detailed Work Activity summary that best represents this cluster.
+Write ONE O*NET-style Detailed Work Activity-style summary that best represents this cluster.
 Apply the rules given in the system message.
 
 Example tasks:
@@ -51,9 +53,7 @@ Now write the single summary statement:
 """
 
 records=[]
-max_tasks = 20 #limit inputs
-for cluster_id, tasks in grouped.items():
-    sample_tasks = tasks[:max_tasks]
+for cluster_id, sample_tasks in grouped.items():
     examples_str = "\n".join(f"- {t}" for t in sample_tasks)
     user_content = USER_PROMPT_TEMPLATE.format(examples=examples_str)
     print(f"Generating summary for cluster {cluster_id} (using {len(sample_tasks)} tasks)...")

@@ -76,4 +76,3 @@ df["closest_dwatitle_tfidf"] = df["closest_dwa_tfidf"].map(id_to_title)
 #print(df.head(10).T)
 
 df.to_parquet(OUT_PATH, index=False)
-print(f"Wrote {OUT_PATH} with shape {df.shape}")

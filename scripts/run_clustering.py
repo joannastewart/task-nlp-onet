@@ -37,7 +37,7 @@ pca.fit(task_embeddings)
 print("pca explained variance",sum(pca.explained_variance_ratio_))
 X, pca = pca_on_embeddings(task_embeddings, n_components=n_components, random_state=random_state)
 
-k_list = [50, 100, 200, 300, 400, 500, 600, 700]
+k_list = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
 results_df = evaluate_kmeans(X, k_list, random_state=random_state)
 print("KMeans evaluation:")
 print(results_df)
